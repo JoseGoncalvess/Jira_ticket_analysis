@@ -139,7 +139,9 @@ class AppJiraParser(ctk.CTk):
     def executar_processamento(self, caminho):
         try:
             log_callback = self.adicionar_log
-            map_cto_agregado = {cto.split(' - ')[0]: [] for cto in db.list_of_cto}
+            # map_cto_agregado = {cto[0]: [] for cto in db.list_of_Cto}
+            map_cto_agregado = dict.fromkeys(db.list_of_Cto[0], [])  
+
 
             lista_de_arquivos = []
             if os.path.isdir(caminho):
