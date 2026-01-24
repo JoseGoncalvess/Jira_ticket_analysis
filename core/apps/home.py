@@ -1,4 +1,4 @@
-from core.services.services import processar_arquivo_xml, criar_planilhas_por_empresa
+from core.services.services import processar_arquivo_xml, criar_planilhas_por_empresa, unificar_planilhas
 from core.data import dataBase as db
 
 import customtkinter as ctk
@@ -24,8 +24,7 @@ class AppJiraParser(ctk.CTk):
         super().__init__()
 
         self.title("Processador de Chamados Jira")
-        icone_path = resource_path('core/assets/icon_app.ico')
-        self.iconbitmap(icone_path)
+        self.iconbitmap(resource_path(os.path.join("core", "assets", "icon_app.ico")))
         self.geometry("700x550") 
         ctk.set_appearance_mode("System")
         
@@ -140,7 +139,7 @@ class AppJiraParser(ctk.CTk):
         try:
             log_callback = self.adicionar_log
             # map_cto_agregado = {cto[0]: [] for cto in db.list_of_Cto}
-            map_cto_agregado = dict.fromkeys(db.list_of_Cto[0], [])  
+            map_cto_agregado = {cto: [] for cto in db.list_of_Cto[0]} 
 
 
             lista_de_arquivos = []
@@ -159,6 +158,10 @@ class AppJiraParser(ctk.CTk):
                 
                 criar_planilhas_por_empresa(map_cto_agregado, log_callback, self.pasta_destino)
                 log_callback("\nProcesso concluído com sucesso!")
+
+                caminho_unificado =  F"{self.pasta_destino}//RELATORIO_GERAL_CONSOLIDADO.xlsx"
+
+                unificar_planilhas(f"{self.pasta_destino}//Relatorios_Jira",caminho_unificado, log_callback)
                 messagebox.showinfo("Sucesso", "O processamento foi concluído e os relatórios foram gerados!")
 
         except Exception as e:
